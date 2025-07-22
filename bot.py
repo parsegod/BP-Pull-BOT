@@ -7,80 +7,132 @@ import json
 import os
 ##################################################################################
 
-#Load blueprint Data from JSON
-##################################################################################
+# Load JSON data
 with open("blueprints.json", "r") as f:
-    BLUEPRINTS = json.load(f)
+    data = json.load(f)
 
-# Set up Discord bot intents to receive all events
+# Constants
+WEAPON_TYPES = [
+    "assault rifles", "smgs", "shotguns", "snipers",
+    "lmgs", "marksman", "pistols", "melee", "all"
+]
+
+CATEGORY_MAP = {
+    "assault rifles": "0",
+    "smgs": "1",
+    "shotguns": "2",
+    "snipers": "3",
+    "lmgs": "4",
+    "marksman": "5",
+    "pistols": "6",
+    "melee": "7"
+}
+
+# Bot setup
 intents = discord.Intents.all()
-# Initialize the bot with a command prefix and specified intents
 bot = commands.Bot(command_prefix="!", intents=intents)
-# Get the command tree for registering application (slash) commands
 tree = bot.tree
-##################################################################################
 
-# Event handler for when the bot has successfully connected to Discord
-##################################################################################
 @bot.event
 async def on_ready():
-    # Print a message to the console indicating the bot is logged in
-    print(f"Bot logged in as {bot.user}")
-    try:
-        # Attempt to synchronize slash commands with Discord
-        await tree.sync()
-        print("Slash commands synced.")
-    except Exception as e:
-        # Print any error that occurs during slash command synchronization
-        print(f"Error syncing slash commands: {e}")
-##################################################################################
+    print(f"✅ Logged in as {bot.user}")
+    await tree.sync()
+    print("✅ Slash commands synced.")
 
-# Define a new slash command named "blueprint"
-##################################################################################
-@tree.command(name="blueprint", description="View a blueprint by ID")
-# Define the argument for the "blueprint" command
-@app_commands.describe(nameid="The ID of the blueprint (e.g., storm_rage)")
+# 🔍 Blueprint lookup helper
+def find_blueprint(nameid: str):
+    nameid = nameid.lower()
+    for weapon in data["Weapons"]:
+        for bp in weapon["Blueprints"]:
+            if bp["Name"].lower() == nameid:
+                return {
+                    "weapon": weapon["Name"],
+                    "blueprint_name": bp["Name"],
+                    "pool": bp["Pool"],
+                    "status": bp.get("status", "UNKNOWN")
+                }
+    return None
+
+# 📦 Pool blueprint list
+def get_pool_blueprints(pool_number: str, weapontype: str = "all"):
+    results = []
+    for weapon in data["Weapons"]:
+        if weapontype != "all":
+            if CATEGORY_MAP.get(weapontype, "-1") != weapon["Category"]:
+                continue
+        for bp in weapon["Blueprints"]:
+            if bp["Pool"] == pool_number:
+                results.append(f"{bp['Name']} ({weapon['Name']})")
+    return results
+
+# 🔄 Autocomplete for weapon type
+async def weapontype_autocomplete(interaction: discord.Interaction, current: str):
+    return [
+        app_commands.Choice(name=wt, value=wt)
+        for wt in WEAPON_TYPES
+        if current.lower() in wt.lower()
+    ]
+
+# ✅ /blueprint command
+@tree.command(name="blueprint", description="Look up a blueprint by name")
+@app_commands.describe(nameid="Name of the blueprint (e.g., STORM RAGE)")
 async def blueprint(interaction: discord.Interaction, nameid: str):
-    # Search for a blueprint in the BLUEPRINTS list that matches the provided ID (case-insensitive)
-    bp = next((b for b in BLUEPRINTS if b["id"].lower() == nameid.lower()), None)
-    # If no blueprint is found, send an error message to the user
+    bp = find_blueprint(nameid)
     if not bp:
         await interaction.response.send_message("❌ Blueprint not found.", ephemeral=True)
         return
 
-# Create a Discord embed to display blueprint information
-##################################################################################
     embed = discord.Embed(
-        title=bp["name"],
-        description=f"🔫 **Weapon:** {bp['weapon']}\n📦 **Pool:** {bp['pool']['name']}",
+        title=bp["blueprint_name"],
+        description=f"🔫 **Weapon:** {bp['weapon']}\n📦 **Pool:** {bp['pool']}\n📜 **Status:** {bp['status']}",
         color=discord.Color.blurple()
     )
-    embed.set_image(url=bp["image"])
 
-    view = discord.ui.View()
-    
-    # Define a custom button class for viewing the blueprint's pool
     class ViewPoolButton(discord.ui.Button):
         def __init__(self):
-
             super().__init__(label="View Pool", style=discord.ButtonStyle.primary)
 
-        # Callback function executed when the "View Pool" button is pressed
         async def callback(self, interaction_button: discord.Interaction):
+            pool_bps = get_pool_blueprints(bp["pool"])
+            if not pool_bps:
+                await interaction_button.response.send_message("No blueprints found in this pool.", ephemeral=True)
+                return
 
-            pool_number = bp["pool"]["number"]
-            pool_blueprints = [b for b in BLUEPRINTS if b["pool"]["number"] == pool_number]
             pool_embed = discord.Embed(
-                title=f"{bp['pool']['name']}",
-                description="\n".join([f"**{i+1}.** {b['name']} (`{b['id']}`)" for i, b in enumerate(pool_blueprints)]),
+                title=f"Pool {bp['pool']} Blueprints",
+                description="\n".join(f"**{i+1}.** {name}" for i, name in enumerate(pool_bps)),
                 color=discord.Color.green()
             )
             await interaction_button.response.send_message(embed=pool_embed, ephemeral=True)
 
-    # Add the custom "View Pool" button to the view
+    view = discord.ui.View()
     view.add_item(ViewPoolButton())
-    # Send the initial blueprint embed with the button to the user
+
     await interaction.response.send_message(embed=embed, view=view)
+
+# ✅ /pool command with autocomplete
+@tree.command(name="pool", description="View all blueprints in a specific pool")
+@app_commands.describe(
+    number="Pool number (e.g. 1)",
+    weapontype="Weapon type filter (e.g. smgs, ars, all)"
+)
+@app_commands.autocomplete(weapontype=weapontype_autocomplete)
+async def pool(interaction: discord.Interaction, number: int, weapontype: str = "all"):
+    pool_number = str(number)
+    weapontype = weapontype.lower()
+
+    results = get_pool_blueprints(pool_number, weapontype)
+    if not results:
+        await interaction.response.send_message("❌ No blueprints found for that pool/type.", ephemeral=True)
+        return
+
+    embed = discord.Embed(
+        title=f"📦 Pool {pool_number} — {weapontype.upper()}",
+        description="\n".join(f"**{i+1}.** {name}" for i, name in enumerate(results)),
+        color=discord.Color.green()
+    )
+    await interaction.response.send_message(embed=embed)
+
 ##################################################################################
 
 # Retrieve the Discord bot token from environment variables

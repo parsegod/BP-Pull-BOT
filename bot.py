@@ -7,14 +7,14 @@ import json
 import os
 ##################################################################################
 
-#  Load blueprint database
+# Load JSON data
 with open("blueprints.json", "r") as f:
     data = json.load(f)
 
-#  Constants
+# Constants
 WEAPON_TYPES = [
     "assault rifles", "smgs", "shotguns", "snipers",
-    "lmgs", "marksman", "pistols", "melee"
+    "lmgs", "marksman", "pistols", "melee", "all"
 ]
 
 CATEGORY_MAP = {
@@ -28,7 +28,7 @@ CATEGORY_MAP = {
     "melee": "7"
 }
 
-#  Bot setup
+# Bot setup
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="!", intents=intents)
 tree = bot.tree
@@ -39,7 +39,7 @@ async def on_ready():
     await tree.sync()
     print("✅ Slash commands synced.")
 
-#  Helper: find blueprint info
+# 🔍 Blueprint lookup helper
 def find_blueprint(nameid: str):
     nameid = nameid.lower()
     for weapon in data["Weapons"]:
@@ -53,18 +53,27 @@ def find_blueprint(nameid: str):
                 }
     return None
 
-#  Helper: autocomplete weapon types
-async def weapontype_autocomplete(
-    interaction: discord.Interaction,
-    current: str
-) -> list[app_commands.Choice[str]]:
+# 📦 Pool blueprint list
+def get_pool_blueprints(pool_number: str, weapontype: str = "all"):
+    results = []
+    for weapon in data["Weapons"]:
+        if weapontype != "all":
+            if CATEGORY_MAP.get(weapontype, "-1") != weapon["Category"]:
+                continue
+        for bp in weapon["Blueprints"]:
+            if bp["Pool"] == pool_number:
+                results.append(f"{bp['Name']} ({weapon['Name']})")
+    return results
+
+# 🔄 Autocomplete for weapon type
+async def weapontype_autocomplete(interaction: discord.Interaction, current: str):
     return [
         app_commands.Choice(name=wt, value=wt)
         for wt in WEAPON_TYPES
         if current.lower() in wt.lower()
     ]
 
-#  /blueprint command
+# ✅ /blueprint command
 @tree.command(name="blueprint", description="Look up a blueprint by name")
 @app_commands.describe(nameid="Name of the blueprint (e.g., STORM RAGE)")
 async def blueprint(interaction: discord.Interaction, nameid: str):
@@ -84,27 +93,24 @@ async def blueprint(interaction: discord.Interaction, nameid: str):
             super().__init__(label="View Pool", style=discord.ButtonStyle.primary)
 
         async def callback(self, interaction_button: discord.Interaction):
-            results = []
-            for weapon in data["Weapons"]:
-                for inner_bp in weapon["Blueprints"]:
-                    if inner_bp["Pool"] == bp["pool"]:
-                        results.append(f"{inner_bp['Name']} ({weapon['Name']})")
-            if not results:
+            pool_bps = get_pool_blueprints(bp["pool"])
+            if not pool_bps:
                 await interaction_button.response.send_message("No blueprints found in this pool.", ephemeral=True)
                 return
 
             pool_embed = discord.Embed(
                 title=f"Pool {bp['pool']} Blueprints",
-                description="\n".join(f"**{i+1}.** {name}" for i, name in enumerate(results)),
+                description="\n".join(f"**{i+1}.** {name}" for i, name in enumerate(pool_bps)),
                 color=discord.Color.green()
             )
             await interaction_button.response.send_message(embed=pool_embed, ephemeral=True)
 
     view = discord.ui.View()
     view.add_item(ViewPoolButton())
+
     await interaction.response.send_message(embed=embed, view=view)
 
-# 📦 /pool command
+# ✅ /pool command with autocomplete
 @tree.command(name="pool", description="View all blueprints in a specific pool")
 @app_commands.describe(
     number="Pool number (e.g. 1)",
@@ -115,57 +121,17 @@ async def pool(interaction: discord.Interaction, number: int, weapontype: str = 
     pool_number = str(number)
     weapontype = weapontype.lower()
 
-    options = []
-    for weapon in data["Weapons"]:
-        if weapontype != "all" and CATEGORY_MAP.get(weapontype, "-1") != weapon["Category"]:
-            continue
-        for bp in weapon["Blueprints"]:
-            if bp["Pool"] == pool_number:
-                options.append(discord.SelectOption(
-                    label=f"{bp['Name']} ({weapon['Name']})",
-                    value=bp["Name"]
-                ))
-
-    if not options:
+    results = get_pool_blueprints(pool_number, weapontype)
+    if not results:
         await interaction.response.send_message("❌ No blueprints found for that pool/type.", ephemeral=True)
         return
 
     embed = discord.Embed(
         title=f"📦 Pool {pool_number} — {weapontype.upper()}",
-        description="\n".join(f"**{i+1}.** {opt.label}" for i, opt in enumerate(options)),
+        description="\n".join(f"**{i+1}.** {name}" for i, name in enumerate(results)),
         color=discord.Color.green()
     )
-
-    class BlueprintDropdown(discord.ui.Select):
-        def __init__(self):
-            super().__init__(
-                placeholder="🔍 Choose a blueprint...",
-                min_values=1,
-                max_values=1,
-                options=options
-            )
-
-        async def callback(self, interaction_dropdown: discord.Interaction):
-            selected_name = self.values[0]
-            bp = find_blueprint(selected_name)
-            if not bp:
-                await interaction_dropdown.response.send_message("❌ Blueprint not found.", ephemeral=True)
-                return
-
-            embed = discord.Embed(
-                title=bp["blueprint_name"],
-                description=f"🔫 **Weapon:** {bp['weapon']}\n📦 **Pool:** {bp['pool']}\n📜 **Status:** {bp['status']}",
-                color=discord.Color.blurple()
-            )
-            await interaction_dropdown.response.send_message(embed=embed, ephemeral=True)
-
-    class BlueprintDropdownView(discord.ui.View):
-        def __init__(self):
-            super().__init__(timeout=60)
-            self.add_item(BlueprintDropdown())
-
-    await interaction.response.send_message(embed=embed, view=BlueprintDropdownView(), ephemeral=True)
-
+    await interaction.response.send_message(embed=embed)
 
 ##################################################################################
 

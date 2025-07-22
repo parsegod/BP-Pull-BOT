@@ -6,7 +6,7 @@ from discord import app_commands
 import json
 import os
 ##################################################################################
-
+load_dotenv()
 # Load JSON data
 with open("blueprints.json", "r") as f:
     data = json.load(f)

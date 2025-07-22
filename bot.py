@@ -164,7 +164,8 @@ async def pool(interaction: discord.Interaction, number: int, weapontype: str = 
             super().__init__(timeout=60)
             self.add_item(BlueprintDropdown())
 
-    await interaction.response.send_message(embed=embed, view=BlueprintDropdownView())
+    await interaction.response.send_message(embed=embed, view=BlueprintDropdownView(), ephemeral=True)
+
 
 ##################################################################################
 

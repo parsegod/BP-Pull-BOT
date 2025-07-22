@@ -2,7 +2,7 @@
   "Weapons": [
     {
       "Name": "XM4",
-      "Category": "0",
+      "Category": "1",
       "Blueprints": [
         { "Name": "GUMBALL BALLISTICS", "Pool": "1", "status": "RELEASED" },
         { "Name": "RAZOR BURN", "Pool": "2", "status": "RELEASED" },
@@ -41,7 +41,7 @@
     },
     {
       "Name": "AK-74",
-      "Category": "0",
+      "Category": "1",
       "Blueprints": [
         { "Name": "GRATITUDE", "Pool": "1", "status": "RELEASED" },
         { "Name": "NULL", "Pool": "2", "status": "RELEASED" },
@@ -80,7 +80,7 @@
     },
     {
       "Name": "AMES 85",
-      "Category": "0",
+      "Category": "1",
       "Blueprints": [
         { "Name": "THE REDACTOR", "Pool": "1", "status": "RELEASED" },
         { "Name": "COUNTDOWN", "Pool": "2", "status": "RELEASED" },
@@ -119,7 +119,7 @@
     },
     {
       "Name": "GPR 91",
-      "Category": "0",
+      "Category": "1",
       "Blueprints": [
         { "Name": "GINGER DREAD", "Pool": "1", "status": "RELEASED" },
         { "Name": "DON'T MOVE", "Pool": "2", "status": "RELEASED" },
@@ -150,7 +150,7 @@
     },
     {
       "Name": "MODEL L",
-      "Category": "0",
+      "Category": "1",
       "Blueprints": [
         { "Name": "ASPHALT", "Pool": "1", "status": "RELEASED" },
         { "Name": "WARRIORS BLOOD", "Pool": "2", "status": "RELEASED" },
@@ -181,7 +181,7 @@
     },
     {
       "Name": "GOBLIN MK 2",
-      "Category": "0",
+      "Category": "1",
       "Blueprints": [
         { "Name": "PROPER GENTLEMAN", "Pool": "1", "status": "RELEASED" },
         { "Name": "TIP THE SCALES", "Pool": "2", "status": "RELEASED" },
@@ -212,7 +212,7 @@
     },
     {
       "Name": "AS VAL",
-      "Category": "0",
+      "Category": "1",
       "Blueprints": [
         { "Name": "RAPIER", "Pool": "1", "status": "RELEASED" },
         { "Name": "CANNIBAL", "Pool": "2", "status": "RELEASED" },
@@ -243,7 +243,7 @@
     },
     {
       "Name": "KRIG C",
-      "Category": "0",
+      "Category": "1",
       "Blueprints": [
         { "Name": "SEASONAL AGGRESSION", "Pool": "1", "status": "RELEASED" },
         { "Name": "BLACKCELL BAD BEAT", "Pool": "2", "status": "RELEASED" },
@@ -274,7 +274,7 @@
     },
     {
       "Name": "CYPHER 091",
-      "Category": "0",
+      "Category": "1",
       "Blueprints": [
         { "Name": "DEATH BLOW", "Pool": "1", "status": "RELEASED" },
         { "Name": "PLAYBOOK", "Pool": "2", "status": "RELEASED" },
@@ -305,7 +305,7 @@
     },
     {
       "Name": "KILO 141",
-      "Category": "0",
+      "Category": "1",
       "Blueprints": [
         { "Name": "PHANTOM FENRIR", "Pool": "1", "status": "RELEASED" },
         { "Name": "UNRELEASED", "Pool": "2", "status": "NOTEXTURE" },
@@ -336,7 +336,7 @@
     },
     {
       "Name": "CR-56 AMAX",
-      "Category": "0",
+      "Category": "1",
       "Blueprints": [
         { "Name": "BLACKCELL VERDUROUS MENACE", "Pool": "1", "status": "RELEASED" },
         { "Name": "DATA BREACHER", "Pool": "2", "status": "RELEASED" },
@@ -367,7 +367,7 @@
     },
     {
       "Name": "FFAR 1",
-      "Category": "0",
+      "Category": "1",
       "Blueprints": [
         { "Name": "PUNISHING BLOWS", "Pool": "1", "status": "RELEASED" },
         { "Name": "UNRELEASED", "Pool": "2", "status": "NOTEXTURE" },
@@ -398,7 +398,7 @@
     },
     {
       "Name": "C9",
-      "Category": "1",
+      "Category": "2",
       "Blueprints": [
         { "Name": "HARDWIRE", "Pool": "1", "status": "RELEASED" },
         { "Name": "TEDDY IS A LIAR", "Pool": "2", "status": "RELEASED" },
@@ -429,7 +429,7 @@
     },
     {
       "Name": "KSV",
-      "Category": "1",
+      "Category": "2",
       "Blueprints": [
         { "Name": "PURIFIER", "Pool": "1", "status": "RELEASED" },
         { "Name": "GUARD DUTY", "Pool": "2", "status": "RELEASED" },
@@ -460,7 +460,7 @@
     },
     {
       "Name": "TANTO .22",
-      "Category": "1",
+      "Category": "2",
       "Blueprints": [
         { "Name": "RIPTEAR", "Pool": "1", "status": "RELEASED" },
         { "Name": "PROXIMA", "Pool": "2", "status": "RELEASED" },
@@ -486,7 +486,7 @@
     },
     {
       "Name": "PP-919",
-      "Category": "1",
+      "Category": "2",
       "Blueprints": [
         { "Name": "BAD ATTITUDE", "Pool": "1", "status": "RELEASED" },
         { "Name": "KILLER RESOLVE", "Pool": "2", "status": "RELEASED" },
@@ -512,7 +512,7 @@
     },
     {
       "Name": "JACKAL PDW",
-      "Category": "1",
+      "Category": "2",
       "Blueprints": [
         { "Name": "SCOURGE", "Pool": "1", "status": "RELEASED" },
         { "Name": "POCKET ACE", "Pool": "2", "status": "RELEASED" },
@@ -544,7 +544,7 @@
     },
     {
       "Name": "KOMPAKT 92",
-      "Category": "1",
+      "Category": "2",
       "Blueprints": [
         { "Name": "RADICAL", "Pool": "1", "status": "RELEASED" },
         { "Name": "BLING BLING", "Pool": "2", "status": "RELEASED" },
@@ -570,7 +570,7 @@
     },
     {
       "Name": "SAUG",
-      "Category": "1",
+      "Category": "2",
       "Blueprints": [
         { "Name": "SALUTATIONS", "Pool": "1", "status": "RELEASED" },
         { "Name": "BOSS ORDERS", "Pool": "2", "status": "RELEASED" },
@@ -599,7 +599,7 @@
     },
     {
       "Name": "PPSH-41",
-      "Category": "1",
+      "Category": "2",
       "Blueprints": [
         { "Name": "REEF HUNTER", "Pool": "1", "status": "RELEASED" },
         { "Name": "EGG BREAKER", "Pool": "2", "status": "RELEASED" },
@@ -625,7 +625,7 @@
     },
     {
       "Name": "LADRA",
-      "Category": "1",
+      "Category": "2",
       "Blueprints": [
         { "Name": "BARBED WHISPER", "Pool": "1", "status": "RELEASED" },
         { "Name": "HELLBLOCK", "Pool": "2", "status": "RELEASED" },
@@ -651,7 +651,7 @@
     },
         {
       "Name": "LC10",
-      "Category": "1",
+      "Category": "2",
       "Blueprints": [
         { "Name": "STORM RAGE", "Pool": "1", "status": "RELEASED" },
         { "Name": "BLACKCELL HULL BUSTER", "Pool": "2", "status": "RELEASED" },
@@ -682,7 +682,7 @@
     },
     {
       "Name": "MARINE SP",
-      "Category": "2",
+      "Category": "3",
       "Blueprints": [
         { "Name": "UNREPENTANT", "Pool": "1", "status": "RELEASED" },
         { "Name": "THE BASTION", "Pool": "2", "status": "RELEASED" },
@@ -708,7 +708,7 @@
     },
     {
       "Name": "ASG-89",
-      "Category": "2",
+      "Category": "3",
       "Blueprints": [
         { "Name": "EMBERSCALD", "Pool": "1", "status": "RELEASED" },
         { "Name": "TURMOIL", "Pool": "2", "status": "RELEASED" },
@@ -734,7 +734,7 @@
     },
     {
       "Name": "MAELSTROM",
-      "Category": "2",
+      "Category": "3",
       "Blueprints": [
         { "Name": "HALFPIPE", "Pool": "1", "status": "RELEASED" },
         { "Name": "ICEBOX", "Pool": "2", "status": "RELEASED" },
@@ -760,7 +760,7 @@
     },
     {
       "Name": "PU-21",
-      "Category": "3",
+      "Category": "4",
       "Blueprints": [
         { "Name": "HOG WILD", "Pool": "1", "status": "RELEASED" },
         { "Name": "RAMIFICATIONS", "Pool": "2", "status": "RELEASED" },
@@ -786,7 +786,7 @@
     },
     {
       "Name": "XMG",
-      "Category": "3",
+      "Category": "4",
       "Blueprints": [
         { "Name": "CHAIN DRIVE", "Pool": "1", "status": "RELEASED" },
         { "Name": "GET WIPED", "Pool": "2", "status": "RELEASED" },
@@ -812,7 +812,7 @@
     },
     {
       "Name": "GPMG-7",
-      "Category": "3",
+      "Category": "4",
       "Blueprints": [
         { "Name": "EXO-ORGANISM", "Pool": "1", "status": "RELEASED" },
         { "Name": "BLACKCELL HITHER SLITHER", "Pool": "2", "status": "RELEASED" },
@@ -841,7 +841,7 @@
     },
     {
       "Name": "FENG 82",
-      "Category": "3",
+      "Category": "4",
       "Blueprints": [
         { "Name": "TOURNIQUET", "Pool": "1", "status": "RELEASED" },
         { "Name": "GET LUCKY", "Pool": "2", "status": "RELEASED" },
@@ -867,7 +867,7 @@
     },
     {
       "Name": "SWAT 5.56",
-      "Category": "4",
+      "Category": "5",
       "Blueprints": [
         { "Name": "WATCH AND LEARN", "Pool": "1", "status": "RELEASED" },
         { "Name": "UNRELEASED", "Pool": "2", "status": "NOTEXTURE" },
@@ -893,7 +893,7 @@
     },
     {
       "Name": "TSARKOV 7.62",
-      "Category": "4",
+      "Category": "5",
       "Blueprints": [
         { "Name": "RITUAL'S PATH", "Pool": "1", "status": "RELEASED" },
         { "Name": "FEEDBACK LOOP", "Pool": "2", "status": "RELEASED" },
@@ -919,7 +919,7 @@
     },
     {
       "Name": "AEK-973",
-      "Category": "4",
+      "Category": "5",
       "Blueprints": [
         { "Name": "APHELION", "Pool": "1", "status": "RELEASED" },
         { "Name": "RECONCILIATION", "Pool": "2", "status": "RELEASED" },
@@ -945,7 +945,7 @@
     },
     {
       "Name": "DM-10",
-      "Category": "4",
+      "Category": "5",
       "Blueprints": [
         { "Name": "THE CURATOR", "Pool": "1", "status": "RELEASED" },
         { "Name": "STOCKING SUFFER", "Pool": "2", "status": "RELEASED" },
@@ -971,7 +971,7 @@
     },
     {
       "Name": "TR2",
-      "Category": "4",
+      "Category": "5",
       "Blueprints": [
         { "Name": "CUT OUT", "Pool": "1", "status": "RELEASED" },
         { "Name": "BEAT `EM UP", "Pool": "2", "status": "RELEASED" },
@@ -997,7 +997,7 @@
     },
     {
       "Name": "LW31A1 FROSTLINE",
-      "Category": "5",
+      "Category": "6",
       "Blueprints": [
         { "Name": "DEVIL'S PLAYGROUND", "Pool": "1", "status": "RELEASED" },
         { "Name": "UNRELEASED", "Pool": "2", "status": "NOTEXTURE" },
@@ -1023,7 +1023,7 @@
     },
     {
       "Name": "SVD",
-      "Category": "5",
+      "Category": "6",
       "Blueprints": [
         { "Name": "DARKFLARE", "Pool": "1", "status": "RELEASED" },
         { "Name": "LOVELESS", "Pool": "2", "status": "RELEASED" },
@@ -1049,7 +1049,7 @@
     },
     {
       "Name": "LR 7.62",
-      "Category": "5",
+      "Category": "6",
       "Blueprints": [
         { "Name": "BRAINSTORM", "Pool": "1", "status": "RELEASED" },
         { "Name": "SANCTIFIER", "Pool": "2", "status": "RELEASED" },
@@ -1076,7 +1076,7 @@
     },
     {
       "Name": "AMR MOD 4",
-      "Category": "5",
+      "Category": "6",
       "Blueprints": [
         { "Name": "HIGH SIGHT", "Pool": "1", "status": "RELEASED" },
         { "Name": "DETHRONED", "Pool": "2", "status": "RELEASED" },
@@ -1102,7 +1102,7 @@
     },
     {
       "Name": "HDR",
-      "Category": "5",
+      "Category": "6",
       "Blueprints": [
         { "Name": "BLACKCELL GLINT", "Pool": "1", "status": "RELEASED" },
         { "Name": "NOTHING", "Pool": "2", "status": "NOTHING" },
@@ -1128,7 +1128,7 @@
     },
     {
       "Name": "9MM PM",
-      "Category": "6",
+      "Category": "7",
       "Blueprints": [
         { "Name": "SCRUB", "Pool": "1", "status": "RELEASED" },
         { "Name": "FIRECRACKER", "Pool": "2", "status": "RELEASED" },
@@ -1145,7 +1145,7 @@
     },
     {
       "Name": "GREKHOVA",
-      "Category": "6",
+      "Category": "7",
       "Blueprints": [
         { "Name": "BRUTAL STING", "Pool": "1", "status": "RELEASED" },
         { "Name": "PLAN B", "Pool": "2", "status": "RELEASED" },
@@ -1162,7 +1162,7 @@
     },
     {
       "Name": "GS45",
-      "Category": "6",
+      "Category": "7",
       "Blueprints": [
         { "Name": "VIPEROUS", "Pool": "1", "status": "RELEASED" },
         { "Name": "CUSTODIAN", "Pool": "2", "status": "RELEASED" },
@@ -1179,7 +1179,7 @@
     },
     {
       "Name": "STRYDER .22",
-      "Category": "6",
+      "Category": "7",
       "Blueprints": [
         { "Name": "QUICK MERCY", "Pool": "1", "status": "RELEASED" },
         { "Name": "CONTRA-BANNED", "Pool": "2", "status": "RELEASED" },
@@ -1196,7 +1196,7 @@
     },
     {
       "Name": "CIGMA 2B",
-      "Category": "7",
+      "Category": "8",
       "Blueprints": [
         { "Name": "FINE COLUMN", "Pool": "1", "status": "RELEASED" },
         { "Name": "NOTHING", "Pool": "2", "status": "NOTHING" },
@@ -1213,7 +1213,7 @@
     },
     {
       "Name": "HE-1",
-      "Category": "7",
+      "Category": "8",
       "Blueprints": [
         { "Name": "CHOICEST", "Pool": "1", "status": "RELEASED" },
         { "Name": "NOTHING", "Pool": "2", "status": "NOTHING" },
@@ -1230,7 +1230,7 @@
     },
     {
       "Name": "SIRIN 9MM",
-      "Category": "8",
+      "Category": "9",
       "Blueprints": [
         { "Name": "ABRE ALAS", "Pool": "1", "status": "RELEASED" },
         { "Name": "NOTHING", "Pool": "2", "status": "NOTHING" },
@@ -1247,7 +1247,7 @@
     },
     {
       "Name": "D1.3 SECTOR",
-      "Category": "8",
+      "Category": "9",
       "Blueprints": [
         { "Name": "SLICED", "Pool": "1", "status": "RELEASED" },
         { "Name": "UNRELEASED", "Pool": "2", "status": "NOTEXTURE" },
@@ -1264,7 +1264,7 @@
     },
     {
       "Name": "NAIL GUN",
-      "Category": "8",
+      "Category": "9",
       "Blueprints": [
         { "Name": "RETCON", "Pool": "1", "status": "RELEASED" },
         { "Name": "NOTHING", "Pool": "2", "status": "NOTHING" },
@@ -1282,7 +1282,7 @@
     },
     {
       "Name": "OLYMPIA",
-      "Category": "8",
+      "Category": "9",
       "Blueprints": [
         { "Name": "NOTHING", "Pool": "1", "status": "NOTHING" },
         { "Name": "NOTHING", "Pool": "2", "status": "NOTHING" },
@@ -1321,7 +1321,7 @@
     },
     {
       "Name": "KNIFE",
-      "Category": "9",
+      "Category": "10",
       "Blueprints": [
         { "Name": "UNRELEASED", "Pool": "1", "status": "NOTEXTURE" },
         { "Name": "LADLE", "Pool": "2", "status": "RELEASED" },
@@ -1360,7 +1360,7 @@
     },
     {
       "Name": "BASEBALL BAT",
-      "Category": "9",
+      "Category": "10",
       "Blueprints": [
         { "Name": "BATTER DOWN", "Pool": "1", "status": "RELEASED" },
         { "Name": "NOTHING", "Pool": "2", "status": "NOTHING" },
@@ -1399,7 +1399,7 @@
     },
     {
       "Name": "POWER DRILL",
-      "Category": "9",
+      "Category": "10",
       "Blueprints": [
         { "Name": "SCOUR DRILL", "Pool": "1", "status": "RELEASED" },
         { "Name": "STRING DRILL", "Pool": "2", "status": "RELEASED" },
@@ -1438,7 +1438,7 @@
     },
     {
       "Name": "CLEAVER",
-      "Category": "9",
+      "Category": "10",
       "Blueprints": [
         { "Name": "NOTHING", "Pool": "1", "status": "NOTHING" },
         { "Name": "RAZER BACK", "Pool": "2", "status": "RELEASED" },
@@ -1477,7 +1477,7 @@
     },
     {
       "Name": "SKATEBOARD",
-      "Category": "9",
+      "Category": "10",
       "Blueprints": [
         { "Name": "ROLLING LAUGHTER", "Pool": "1", "status": "RELEASED" },
         { "Name": "NOTHING", "Pool": "2", "status": "NOTHING" },
@@ -1516,7 +1516,7 @@
     },
     {
       "Name": "KATANAS",
-      "Category": "9",
+      "Category": "10",
       "Blueprints": [
         { "Name": "EMBERSHREAD", "Pool": "1", "status": "RELEASED" },
         { "Name": "NOTHING", "Pool": "2", "status": "NOTHING" },
@@ -1542,7 +1542,7 @@
     },
     {
       "Name": "BO STAFF",
-      "Category": "9",
+      "Category": "10",
       "Blueprints": [
         { "Name": "SPLINTERS CANE", "Pool": "1", "status": "RELEASED" },
         { "Name": "NOTHING", "Pool": "2", "status": "NOTHING" },
@@ -1581,7 +1581,7 @@
     },
     {
       "Name": "SAI",
-      "Category": "9",
+      "Category": "10",
       "Blueprints": [
         { "Name": "NOTHING", "Pool": "1", "status": "NOTHING" },
         { "Name": "NOTHING", "Pool": "2", "status": "NOTHING" },
@@ -1620,7 +1620,7 @@
     },
     {
       "Name": "NUNCHAKU",
-      "Category": "9",
+      "Category": "10",
       "Blueprints": [
         { "Name": "NOTHING", "Pool": "1", "status": "NOTHING" },
         { "Name": "NOTHING", "Pool": "2", "status": "NOTHING" },
@@ -1659,7 +1659,7 @@
     },
     {
       "Name": "KALI STICKS",
-      "Category": "9",
+      "Category": "10",
       "Blueprints": [
         { "Name": "REBARCHUCK", "Pool": "1", "status": "RELEASED" },
         { "Name": "NOTHING", "Pool": "2", "status": "NOTHING" },
@@ -1698,7 +1698,7 @@
     },
     {
       "Name": "PICKAXE",
-      "Category": "9",
+      "Category": "10",
       "Blueprints": [
         { "Name": "NOTHING", "Pool": "1", "status": "NOTHING" },
         { "Name": "NOTHING", "Pool": "2", "status": "NOTHING" },

@@ -57,7 +57,7 @@ def find_blueprint(nameid: str):
                 }
     return None
 
-# 📦 Pool blueprint list
+#  Pool blueprint list
 def get_pool_blueprints(pool_number: str, weapontype: str = "all"):
     results = []
     for weapon in data["Weapons"]:
@@ -69,7 +69,7 @@ def get_pool_blueprints(pool_number: str, weapontype: str = "all"):
                 results.append(f"{bp['Name']} ({weapon['Name']})")
     return results
 
-# 🔄 Autocomplete for weapon type
+#  Autocomplete for weapon type
 async def weapontype_autocomplete(interaction: discord.Interaction, current: str):
     return [
         app_commands.Choice(name=wt, value=wt)
@@ -77,7 +77,7 @@ async def weapontype_autocomplete(interaction: discord.Interaction, current: str
         if current.lower() in wt.lower()
     ]
 
-# ✅ /blueprint command
+#  /blueprint command
 @tree.command(name="blueprint", description="Look up a blueprint by name")
 @app_commands.describe(nameid="Name of the blueprint (e.g., STORM RAGE)")
 async def blueprint(interaction: discord.Interaction, nameid: str):
@@ -114,7 +114,7 @@ async def blueprint(interaction: discord.Interaction, nameid: str):
 
     await interaction.response.send_message(embed=embed, view=view)
 
-# ✅ /pool command with autocomplete
+#  /pool command with autocomplete
 @tree.command(name="pool", description="View all blueprints in a specific pool")
 @app_commands.describe(
     number="Pool number (e.g. 1)",

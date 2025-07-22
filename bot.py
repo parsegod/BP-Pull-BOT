@@ -1,10 +1,12 @@
 #Required libraries & imports
 ##################################################################################
 import discord
-from discord.ext import commands
-from discord import app_commands
 import json
 import os
+
+from discord.ext import commands
+from dotenv import load_dotenv
+from discord import app_commands
 
 load_dotenv()
 ##################################################################################

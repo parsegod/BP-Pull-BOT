@@ -5,8 +5,8 @@ import json
 import os
 
 from discord.ext import commands
-from discord import app_commands
 from dotenv import load_dotenv
+from discord import app_commands
 
 load_dotenv()
 ##################################################################################
@@ -57,7 +57,7 @@ def find_blueprint(nameid: str):
                 }
     return None
 
-#  Pool blueprint list
+# 📦 Pool blueprint list
 def get_pool_blueprints(pool_number: str, weapontype: str = "all"):
     results = []
     for weapon in data["Weapons"]:
@@ -69,7 +69,7 @@ def get_pool_blueprints(pool_number: str, weapontype: str = "all"):
                 results.append(f"{bp['Name']} ({weapon['Name']})")
     return results
 
-#  Autocomplete for weapon type
+# 🔄 Autocomplete for weapon type
 async def weapontype_autocomplete(interaction: discord.Interaction, current: str):
     return [
         app_commands.Choice(name=wt, value=wt)
@@ -77,7 +77,7 @@ async def weapontype_autocomplete(interaction: discord.Interaction, current: str
         if current.lower() in wt.lower()
     ]
 
-#  /blueprint command
+# ✅ /blueprint command
 @tree.command(name="blueprint", description="Look up a blueprint by name")
 @app_commands.describe(nameid="Name of the blueprint (e.g., STORM RAGE)")
 async def blueprint(interaction: discord.Interaction, nameid: str):
@@ -112,9 +112,9 @@ async def blueprint(interaction: discord.Interaction, nameid: str):
     view = discord.ui.View()
     view.add_item(ViewPoolButton())
 
-    await interaction.response.send_message(embed=embed, view=view)
+    await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
-#  /pool command with autocomplete
+# ✅ /pool command with autocomplete
 @tree.command(name="pool", description="View all blueprints in a specific pool")
 @app_commands.describe(
     number="Pool number (e.g. 1)",
@@ -135,7 +135,7 @@ async def pool(interaction: discord.Interaction, number: int, weapontype: str = 
         description="\n".join(f"**{i+1}.** {name}" for i, name in enumerate(results)),
         color=discord.Color.green()
     )
-    await interaction.response.send_message(embed=embed)
+    await interaction.response.send_message(embed=embed, ephemeral=True)
 
 ##################################################################################
 
@@ -149,4 +149,3 @@ else:
     print("Error: DISCORD_BOT_TOKEN environment variable not set.")
     print("Please set the DISCORD_BOT_TOKEN environment variable before running the bot.")
 ##################################################################################
-

@@ -1,4 +1,3 @@
-
 #Required libraries & imports
 ##################################################################################
 import discord
@@ -22,20 +21,30 @@ with open("blueprints.json", "r") as f:
 
 # Constants
 WEAPON_TYPES = [
-    "assault rifles", "smgs", "shotguns", "snipers",
-    "lmgs", "marksman", "pistols", "melee", "all"
+    "assault rifles", 
+    "smgs"          ,
+    "shotguns"      , 
+    "snipers"       ,
+    "lmgs"          , 
+    "marksman"      , 
+    "pistols"       ,
+    "launchers"     ,
+    "special"       , 
+    "melee"         , 
+    "all"
 ]
 
 CATEGORY_MAP = {
     "assault rifles": "1",  
-    "smgs": "2",            
-    "shotguns": "3",        
-    "lmgs": "4",            
-    "marksman": "5",        
-    "pistols": "7",         
-    "launchers": "8",       
-    "special": "9",        
-    "melee": "10"           
+    "smgs"          : "2",            
+    "shotguns"      : "3",        
+    "lmgs"          : "4",            
+    "marksman"      : "5", 
+    "snipers"       : "6",       
+    "pistols"       : "7",         
+    "launchers"     : "8",       
+    "special"       : "9",        
+    "melee"         : "10"           
 }
 
 BASE_IMAGE_PATH = "assets/blueprints/images/"
@@ -603,15 +612,20 @@ async def howto(interaction: discord.Interaction, gamemode: app_commands.Choice[
                 "⚠️ PLEASE KEEP IN MIND IF YOU ARE IN A BROKEN STATE THEN IN ORDER TO SAVE BLUEPRINTS YOU MUST DELETE ANY BUILD AND THEN SAVE IT (THE SAME WAY THE CAMO SWAP SAVE WORKS)\n\n"
                 "💡 keep it noted that prints are pulled in half's and currently there is not a way the pull the full prints in one method\n"
                 "if you wish to get the full print you must find the right Receiver attachment combo that pulls the full print (likely hood 1/20 roughly)\n"
-                "but it doesn't matter just throw a nice camo on and you'll be set! 😎"
+                "but it doesn't matter just throw a nice camo on and you'll be set! 😎\n\n"
             ),
             color=discord.Color.blue()
         )
+# 📷 Logo
+        embed.set_thumbnail(url="attachment://logo.png")
         embed.add_field(
             name="🌐 Browse Blueprint Pools",
             value="[parsed.top](https://www.parsed.top/)", inline=False
         )
         embed.set_footer(text="Use /pool and /blueprint for fast lookups.")
+
+        file_to_send = discord.File("assets/logo.png", filename="logo.png")
+
 
     elif gamemode.value == "zombies":
         embed = discord.Embed(
@@ -619,25 +633,28 @@ async def howto(interaction: discord.Interaction, gamemode: app_commands.Choice[
             description=(
                 "⚠️ First, it’s important to know that this exploit only works on **PS5 and Xbox Series X/S**, last-gen consoles and PC players do not have access to split-screen, so this won’t work for you.\n"
                 "Also, Player 2 doesn’t need a leveled-up account, but having one makes the pulls easier. If Player 2 uses a fresh account, you may need to perform an extra glitch to equip locked weapons in your Zombies loadout.\n\n"
-                "🔧 Now, here’s how it works:\n"
+                "🔧 Now, here’s how it works:\n\n"
                 "1️⃣ **Launch Call of Duty** and go into Zombies mode.\n\n"
                 "2️⃣ **Connect a second controller** and sign in with your secondary profile.\n\n"
                 "3️⃣ **Set up Player 2’s loadout** with the weapon you want to pull prints for (like the LADRA).\n\n"
-                "4️⃣ **Back out to the screen** where you can edit your main loadouts that will affect Controller 1’s loadouts.\n\n"
+                "4️⃣ **Back out to the screen** so you can edit your Controller 1 (main account) loadout.\n\n"
                 "5️⃣ On your main account, **equip the blueprint you want to use** to pull the print.\n\n"
                 "6️⃣ After that, **back out to the main menu** where you can select Multiplayer, Zombies, or Campaign.\n\n"
                 "7️⃣ With Controller 2, **select Zombies mode**.\n\n"
-                "8️⃣ Finally, **go back to Player 1’s main loadout**, and you should see the print you were trying to pull, as long as you’ve followed everything correctly."
+                "8️⃣ Finally, **go back to Player 1’s main loadout**, and you should see the print you were trying to pull, as long as you’ve followed everything correctly.\n\n"
         ),
             color=discord.Color.red()
         )
+        embed.set_thumbnail(url="attachment://logo.png")
         embed.add_field(
             name="🌐 Browse Blueprint Pools",
             value="[parsed.top](https://www.parsed.top/)", inline=False
         )
         embed.set_footer(text="Use /pool to explore blueprints across pools and categories.")
 
-    await interaction.response.send_message(embed=embed, ephemeral=True)
+        file_to_send = discord.File("assets/logo.png", filename="logo.png")
+
+    await interaction.response.send_message(embed=embed, ephemeral=True, file=file_to_send)
 
 ##################################################################################
 

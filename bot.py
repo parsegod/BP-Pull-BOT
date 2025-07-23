@@ -22,7 +22,7 @@ with open("blueprints.json", "r") as f:
 # Constants
 WEAPON_TYPES = [
     "assault rifles", "smgs", "shotguns", "snipers",
-    "lmgs", "marksman", "pistols", "melee", "all"
+    "lmgs", "marksman", "pistols", "launchers", "special", "melee", "all"
 ]
 
 CATEGORY_MAP = {
@@ -30,7 +30,8 @@ CATEGORY_MAP = {
     "smgs": "2",            
     "shotguns": "3",        
     "lmgs": "4",            
-    "marksman": "5",        
+    "marksman": "5", 
+    "snipers" : "6",
     "pistols": "7",         
     "launchers": "8",       
     "special": "9",        

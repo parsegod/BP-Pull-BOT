@@ -564,6 +564,69 @@ async def pool(interaction: discord.Interaction, number: int, weapontype: str = 
 
     await interaction.response.send_message(embed=initial_embed, view=view, delete_after=45)
 
+@tree.command(name="website", description="View the Blueprint Database Website")
+async def website(interaction: discord.Interaction):
+    embed = discord.Embed(
+        title="🔗 Visit the Blueprint Database",
+        description="Check out all weapon blueprints and pools on the full website:",
+        color=discord.Color.teal()
+    )
+    embed.add_field(
+        name="🌐 Website",
+        value="[parsed.top](https://www.parsed.top/)",
+        inline=False
+    )
+    await interaction.response.send_message(embed=embed, ephemeral=True)
+
+@tree.command(name="howto", description="Learn how blueprint pulling works")
+@app_commands.describe(gamemode="Choose a gamemode: wz/mp or zombies")
+@app_commands.choices(gamemode=[
+    app_commands.Choice(name="Warzone / Multiplayer", value="wz"),
+    app_commands.Choice(name="Zombies", value="zombies")
+])
+async def howto(interaction: discord.Interaction, gamemode: app_commands.Choice[str]):
+    if gamemode.value == "wz":
+        embed = discord.Embed(
+            title="🎮 Blueprint Pulling — MP & Warzone Method",
+            description=(
+                "**Working Universally through MP and WZ**\n\n"
+                "1️⃣ **Make a Setup Gun** (base of the gun you want to pull)\n"
+                "(create new -> delete build -> add att [Same As Receiver slots] -> name build Setup)\n\n"
+                "2️⃣ **Find A Print you own** in the same pool as the print you wanna pull, create new build and then fill the same att slots as the Receiver.\n"
+                "(Optional: Rename to Receiver)\n\n"
+                "3️⃣ **Equip the Receiver** and then **equip the Unowned Camo**\n"
+                "(If you are using DB then this is the same just DB shotgun with only DB)\n"
+                "⚠️ {RECOMMENDED: DUPE THE UNOWNED CAMO TO PREVENT WIPING!}\n\n"
+                "4️⃣ **Kill yourself** and then **requip that Build (setup)**\n\n"
+                "5️⃣ **Finally equip the unowned camo again to save it**\n"
+                "(or just equip a att 2x on build)\n\n"
+                "⚠️ PLEASE KEEP IN MIND IF YOU ARE IN A BROKEN STATE THEN IN ORDER TO SAVE BLUEPRINTS YOU MUST DELETE ANY BUILD AND THEN SAVE IT (THE SAME WAY THE CAMO SWAP SAVE WORKS)\n\n"
+                "💡 keep it noted that prints are pulled in half's and currently there is not a way the pull the full prints in one method\n"
+                "if you wish to get the full print you must find the right Receiver attachment combo that pulls the full print (likely hood 1/20 roughly)\n"
+                "but it doesn't matter just throw a nice camo on and you'll be set! 😎"
+            ),
+            color=discord.Color.blue()
+        )
+        embed.add_field(
+            name="🌐 Browse Blueprint Pools",
+            value="[parsed.top](https://www.parsed.top/)", inline=False
+        )
+        embed.set_footer(text="Use /pool and /blueprint for fast lookups.")
+
+    elif gamemode.value == "zombies":
+        embed = discord.Embed(
+            title="🧟 Zombies Blueprint Pulling (Split-Screen Exploit)",
+            description=(
+                "⚠️ First, it’s important to know that this exploit only works on **PS5 and Xbox Series X/S**, last-gen consoles and PC players do not have access to split-screen, so this won’t work for you.\n"
+                "Also, Player 2 doesn’t need a leveled-up account, but having one makes the pulls easier. If Player 2 uses a fresh account, you may need to perform an extra glitch to equip locked weapons in your Zombies loadout.\n\n"
+                "🔧 Now, here’s how it works: start by launching Call of Duty and go into Zombies mode. Connect a second controller and sign in with your secondary profile. Set up Player 2’s loadout with the weapon you want to pull prints for (like the LADRA). Then back out to the screen where you can edit your main loadouts—that will affect Controller 1’s loadouts. On your main account, equip the blueprint you want to use to pull the print. After that, back out to the main menu where you can select Multiplayer, Zombies, or Campaign. With Controller 2, select Zombies mode. Finally, go back to Player 1’s main loadout, and you should see the print you were trying to pull, as long as you’ve followed everything correctly."
+            ),
+            color=discord.Color.red()
+        )
+        embed.set_footer(text="Use /pool to explore blueprints across pools and categories.")
+
+    await interaction.response.send_message(embed=embed, ephemeral=True)
+
 ##################################################################################
 
 # Retrieve the Discord bot token from environment variables

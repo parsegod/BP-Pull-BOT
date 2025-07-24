@@ -7,6 +7,8 @@ import asyncio
 import random
 import collections
 import time
+import logging
+import re 
 
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -14,6 +16,36 @@ from discord import app_commands
 
 load_dotenv()
 ##################################################################################
+
+# Configure logging to theme specific discord.py messages
+class DiscordThemeFormatter(logging.Formatter):
+    def format(self, record):
+        message = record.getMessage()
+        if record.name == "discord.client" and "logging in using static token" in message:
+
+            return f"✅ Logged in using static token"
+        elif record.name == "discord.gateway" and "has connected to Gateway" in message:
+            shard_id = record.args[0] if record.args else "None"
+            session_id_match = re.search(r'Session ID: ([a-f0-9]+)', message)
+            session_id_str = f" (Session ID: {session_id_match.group(1)})" if session_id_match else ""
+            return f"✅ Shard ID {shard_id} has connected to Gateway{session_id_str}"
+        if record.name in ['discord.client', 'discord.gateway']:
+            return "" 
+        
+        return super().format(record)
+handler = logging.StreamHandler()
+handler.setFormatter(DiscordThemeFormatter())
+
+loggers_to_configure = ['discord.client', 'discord.gateway']
+
+for logger_name in loggers_to_configure:
+    logger = logging.getLogger(logger_name)
+    logger.setLevel(logging.INFO) 
+    if logger.hasHandlers():
+        for existing_handler in logger.handlers[:]:
+            logger.removeHandler(existing_handler)
+    logger.addHandler(handler)
+    logger.propagate = False
 
 # Load JSON data
 with open("blueprints.json", "r") as f:
@@ -54,7 +86,7 @@ intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="!", intents=intents)
 tree = bot.tree
 
-# Global dictionary to store the last ephemeral message sent to each user
+# Global dictionary
 last_ephemeral_messages = {}
 
 @bot.event
@@ -67,14 +99,11 @@ async def on_ready():
 
 # Rate Limit
 EMBED_TIMESTAMPS = collections.deque()
-MAX_EMBEDS_PER_PERIOD = 4
-PERIOD_SECONDS = 35
+MAX_EMBEDS_PER_PERIOD = 4 # Embed Limit
+PERIOD_SECONDS = 35 # Timeout Lengh
 
 def check_and_apply_rate_limit():
-    """
-    Checks if the global embed rate limit is exceeded and applies it.
-    Returns (True, time_left) if rate-limited, (False, 0) otherwise.
-    """
+
     current_time = time.time()
 
     while EMBED_TIMESTAMPS and EMBED_TIMESTAMPS[0] <= current_time - PERIOD_SECONDS:
@@ -97,7 +126,7 @@ async def send_and_manage_ephemeral(interaction: discord.Interaction, **kwargs):
     # Delete previous ephemeral message if it exists for this user
     if user_id in last_ephemeral_messages:
         try:
-            # Attempt to delete the message. It might fail if the user already dismissed it.
+
             await last_ephemeral_messages[user_id].delete()
         except discord.NotFound:
             pass
@@ -122,6 +151,7 @@ def find_blueprint(nameid: str):
     nameid_lower = nameid.lower()
     for weapon in data["Weapons"]:
         for bp in weapon["Blueprints"]:
+
             if bp["Name"].lower() == nameid_lower:
                 can_display_image = bp.get("status", "RELEASED") not in ["NOTHING", "NOTEXTURE"]
                 image_path = None
@@ -162,8 +192,50 @@ def find_blueprint(nameid: str):
                     "status": bp.get("status", "UNKNOWN"),
                     "image_path": image_path
                 }
+
             full_bp_name = f"{bp['Name']} ({weapon['Name']})".lower()
             if full_bp_name == nameid_lower:
+                can_display_image = bp.get("status", "RELEASED") not in ["NOTHING", "NOTEXTURE"]
+                image_path = None
+                if can_display_image:
+                    original_weapon_folder_name = weapon["Name"]
+                    original_blueprint_file_name = bp["Name"]
+                    name_variants_to_try = [
+                        (original_weapon_folder_name, original_blueprint_file_name),
+                        (original_weapon_folder_name.replace(" ", "_"), original_blueprint_file_name.replace(" ", "_")),
+                    ]
+                    final_name_pairs_to_check = []
+                    for w_name, bp_name in name_variants_to_try:
+                        final_name_pairs_to_check.append((w_name, bp_name))
+                        if w_name.lower() != w_name or bp_name.lower() != bp_name:
+                            final_name_pairs_to_check.append((w_name.lower(), bp_name.lower()))
+                    seen = set()
+                    unique_final_name_pairs = []
+                    for pair in final_name_pairs_to_check:
+                        if pair not in seen:
+                            unique_final_name_pairs.append(pair)
+                            seen.add(pair)
+                    found_image = False
+                    attempted_paths = []
+                    for w_name, bp_name in unique_final_name_pairs:
+                        candidate_image_path = os.path.join(BASE_IMAGE_PATH, w_name, f"{bp_name}.jpg")
+                        candidate_image_path_for_url = candidate_image_path.replace('\\', '/')
+                        attempted_paths.append(candidate_image_path_for_url)
+                        if os.path.exists(candidate_image_path):
+                            image_path = candidate_image_path_for_url
+                            found_image = True
+                            break
+                    if not found_image:
+                        image_path = None
+                return {
+                    "weapon": weapon["Name"],
+                    "blueprint_name": bp["Name"],
+                    "pool": bp["Pool"],
+                    "status": bp.get("status", "UNKNOWN"),
+                    "image_path": image_path
+                }
+            unique_value_format = f"{bp['Name']}::{weapon['Name']}::{bp.get('Pool', 'NoPool')}".lower()
+            if unique_value_format == nameid_lower:
                 can_display_image = bp.get("status", "RELEASED") not in ["NOTHING", "NOTEXTURE"]
                 image_path = None
                 if can_display_image:
@@ -208,13 +280,20 @@ def find_blueprint(nameid: str):
 # 📦 Pool blueprint list
 def get_pool_blueprints(pool_number: str, weapontype: str = "all"):
     results = []
+    seen_values = set() # To track unique values
     for weapon in data["Weapons"]:
         if weapontype != "all":
             if CATEGORY_MAP.get(weapontype, "-1") != weapon["Category"]:
                 continue
         for bp in weapon["Blueprints"]:
             if bp["Pool"] == pool_number:
-                results.append(f"{bp['Name']} ({weapon['Name']})")
+
+                unique_value = f"{bp['Name']}::{weapon['Name']}::{bp['Pool']}" 
+                display_label = f"(Pool **{bp['Pool']}**) (**{weapon['Name']}**) **{bp['Name']}** [`{bp.get('status', 'RELEASED')}`]"
+                
+                if unique_value not in seen_values: 
+                    results.append({"label": display_label, "value": unique_value})
+                    seen_values.add(unique_value)
     return results
 
 # 🔄 Autocomplete for weapon type
@@ -239,7 +318,6 @@ EMBED_COLORS = [
 async def blueprint(interaction: discord.Interaction, nameid: str):
     is_limited, time_left = check_and_apply_rate_limit()
     if is_limited:
-        # Use the new helper function for ephemeral rate limit message
         await send_and_manage_ephemeral(
             interaction,
             content=f"Slow down! You can send only {MAX_EMBEDS_PER_PERIOD} embeds every {PERIOD_SECONDS} seconds. Try again in {time_left:.1f} seconds."
@@ -248,7 +326,6 @@ async def blueprint(interaction: discord.Interaction, nameid: str):
 
     bp = find_blueprint(nameid)
     if not bp:
-        # Use the new helper function for ephemeral error message
         await send_and_manage_ephemeral(
             interaction,
             content="❌ Blueprint not found."
@@ -260,7 +337,7 @@ async def blueprint(interaction: discord.Interaction, nameid: str):
 
     embed = discord.Embed(
         title=bp["blueprint_name"],
-        description=f"🔫 **Weapon:** {bp['weapon']}\n📦 **Pool:** {bp['pool']}\n📜 **Status:** {bp['status']}",
+        description=f"📦 **Pool:** **{bp['pool']}**\n🔫 **Weapon:** **{bp['weapon']}**\n✨ **Blueprint:** **{bp['blueprint_name']}**\n📜 **Status:** `{bp['status']}`",
         color=selected_color
     )
 
@@ -282,7 +359,7 @@ async def blueprint(interaction: discord.Interaction, nameid: str):
         async def callback(self, interaction_button: discord.Interaction):
             is_limited, time_left = check_and_apply_rate_limit()
             if is_limited:
-                # Use the new helper function for ephemeral rate limit message
+
                 await send_and_manage_ephemeral(
                     interaction_button,
                     content=f"Slow down! You can send only {MAX_EMBEDS_PER_PERIOD} embeds every {PERIOD_SECONDS} seconds. Try again in {time_left:.1f} seconds."
@@ -311,18 +388,13 @@ async def blueprint(interaction: discord.Interaction, nameid: str):
                 description="Loading blueprints...",
                 color=selected_pool_color
             )
-            pool_pagination_view = BlueprintPaginationView(
-                all_results_for_pool, 
-                self.pool_number, 
-                weapon_type_string, 
-                initial_pool_embed
-            )
+
             sent_message = await interaction_button.followup.send(
                 embed=initial_pool_embed, 
-                view=pool_pagination_view, 
+                view=BlueprintPaginationView(all_results_for_pool, self.pool_number, weapon_type_string, initial_pool_embed), 
                 ephemeral=False
             )
-            await sent_message.delete(delay=45)
+            await sent_message.delete(delay=90) # 
 
     class ViewAllFromPoolButton(discord.ui.Button):
         def __init__(self, pool_number: str):
@@ -332,7 +404,7 @@ async def blueprint(interaction: discord.Interaction, nameid: str):
         async def callback(self, interaction_button: discord.Interaction):
             is_limited, time_left = check_and_apply_rate_limit()
             if is_limited:
-                # Use the new helper function for ephemeral rate limit message
+
                 await send_and_manage_ephemeral(
                     interaction_button,
                     content=f"Slow down! You can send only {MAX_EMBEDS_PER_PERIOD} embeds every {PERIOD_SECONDS} seconds. Try again in {time_left:.1f} seconds."
@@ -353,24 +425,18 @@ async def blueprint(interaction: discord.Interaction, nameid: str):
                 description="Loading blueprints...",
                 color=selected_all_pool_color
             )
-            pool_pagination_view = BlueprintPaginationView(
-                all_results_for_pool, 
-                self.pool_number, 
-                "all",
-                initial_pool_embed
-            )
+
             sent_message = await interaction_button.followup.send(
                 embed=initial_pool_embed, 
-                view=pool_pagination_view, 
+                view=BlueprintPaginationView(all_results_for_pool, self.pool_number, "all", initial_pool_embed), 
                 ephemeral=False
             )
-            await sent_message.delete(delay=45)
+            await sent_message.delete(delay=90)
 
     view = discord.ui.View()
     view.add_item(ViewPoolButton(bp["pool"], bp["weapon"]))
     view.add_item(ViewAllFromPoolButton(bp["pool"]))
 
-    # Use the new helper function for ephemeral blueprint details message
     await send_and_manage_ephemeral(
         interaction,
         embed=embed,
@@ -381,8 +447,10 @@ async def blueprint(interaction: discord.Interaction, nameid: str):
 class BlueprintSelect(discord.ui.Select):
     def __init__(self, page_blueprints: list):
         options = []
-        for bp_name_with_weapon in page_blueprints:
-            options.append(discord.SelectOption(label=bp_name_with_weapon, value=bp_name_with_weapon))
+
+        for bp_data in page_blueprints:
+
+            options.append(discord.SelectOption(label=bp_data["label"], value=bp_data["value"]))
 
         super().__init__(
             placeholder="Select a blueprint to view details...",
@@ -402,8 +470,16 @@ class BlueprintSelect(discord.ui.Select):
             )
             return
 
-        selected_blueprint_full_name = self.values[0] 
-        bp_details = find_blueprint(selected_blueprint_full_name)
+        selected_unique_value = self.values[0] 
+        
+        try:
+            bp_name, weapon_name, _ = selected_unique_value.split("::")
+
+            lookup_name = f"{bp_name} ({weapon_name})"
+            bp_details = find_blueprint(lookup_name)
+        except ValueError:
+
+            bp_details = find_blueprint(selected_unique_value) 
         
         if bp_details:
             # Choose a random color
@@ -411,7 +487,7 @@ class BlueprintSelect(discord.ui.Select):
 
             embed = discord.Embed(
                 title=bp_details["blueprint_name"],
-                description=f"🔫 **Weapon:** {bp_details['weapon']}\n📦 **Pool:** {bp_details['pool']}\n📜 **Status:** {bp_details['status']}",
+                description=f"📦 **Pool:** **{bp_details['pool']}**\n🔫 **Weapon:** **{bp_details['weapon']}**\n✨ **Blueprint:** **{bp_details['blueprint_name']}**\n📜 **Status:** `{bp_details['status']}`",
                 color=selected_blueprint_color
             )
             
@@ -438,7 +514,7 @@ class BlueprintSelect(discord.ui.Select):
 class BlueprintPaginationView(discord.ui.View):
     def __init__(self, all_blueprints: list, pool_number: str, weapontype: str, initial_embed: discord.Embed):
         super().__init__(timeout=180)
-        self.all_blueprints = all_blueprints
+        self.all_blueprints = all_blueprints 
         self.pool_number = pool_number
         self.weapontype = weapontype
         self.current_page = 0
@@ -451,6 +527,7 @@ class BlueprintPaginationView(discord.ui.View):
     def _get_current_page_blueprints(self) -> list:
         start_index = self.current_page * self.max_options_per_page
         end_index = start_index + self.max_options_per_page
+
         return self.all_blueprints[start_index:end_index]
 
     def _update_items(self):
@@ -459,15 +536,18 @@ class BlueprintPaginationView(discord.ui.View):
         current_page_bps = self._get_current_page_blueprints()
         
         if current_page_bps:
-            embed_description = "\n".join(f"**{i+1}.** {name}" for i, name in enumerate(current_page_bps))
+
+            embed_description = "\n".join(f"{bp_data['label']}" for i, bp_data in enumerate(current_page_bps))
             if self.total_pages > 1:
                 embed_description += f"\n\n(Page {self.current_page + 1}/{self.total_pages})"
-            embed_description += "\n\n*Public messages are set to delete in 45 seconds to prevent spam.*"
+
+            embed_description += "\n\n*Public messages are set to delete in 90 seconds to prevent spam.*"
             self.embed.description = embed_description
         else:
             self.embed.description = "No blueprints found on this page."
+
             embed_description = "No blueprints found on this page."
-            embed_description += "\n\n*Public messages are set to delete in 45 seconds to prevent spam.*"
+            embed_description += "\n\n*Public messages are set to delete in 90 seconds to prevent spam.*"
             self.embed.description = embed_description
 
         if current_page_bps:
@@ -560,18 +640,72 @@ async def pool(interaction: discord.Interaction, number: int, weapontype: str = 
         )
         return
 
-    # Choose a random color
     selected_initial_pool_color = random.choice(EMBED_COLORS)
 
     initial_embed = discord.Embed(
-        title=f"📦 Pool {pool_number} — {weapontype.upper()}",
+        title=f"📦 Pool **{pool_number}** — {weapontype.upper()}",
         description="Loading blueprints...",
         color=selected_initial_pool_color
     )
     
     view = BlueprintPaginationView(all_results, pool_number, weapontype, initial_embed)
 
-    await interaction.response.send_message(embed=initial_embed, view=view, delete_after=45)
+    await interaction.response.send_message(embed=initial_embed, view=view, delete_after=90)
+
+# New command to search blueprints by status
+@tree.command(name="search_status", description="Search blueprints by their status")
+@app_commands.describe(status="Choose a blueprint status (RELEASED, UNRELEASED, NOTHING, NOTEXTURE)")
+@app_commands.choices(status=[
+    app_commands.Choice(name="RELEASED", value="RELEASED"),
+    app_commands.Choice(name="UNRELEASED", value="UNRELEASED"),
+    app_commands.Choice(name="NOTHING", value="NOTHING"),
+    app_commands.Choice(name="NOTEXTURE", value="NOTEXTURE")
+])
+async def search_status(interaction: discord.Interaction, status: app_commands.Choice[str]):
+    is_limited, time_left = check_and_apply_rate_limit()
+    if is_limited:
+        await send_and_manage_ephemeral(
+            interaction,
+            content=f"Slow down! You can send only {MAX_EMBEDS_PER_PERIOD} embeds every {PERIOD_SECONDS} seconds. Try again in {time_left:.1f} seconds."
+        )
+        return
+
+    selected_status = status.value
+    results = []
+    seen_values = set() # To track unique values
+    for weapon in data["Weapons"]:
+        for bp in weapon["Blueprints"]:
+            blueprint_status = bp.get("status", "RELEASED") 
+            if blueprint_status == selected_status:
+
+                unique_value = f"{bp['Name']}::{weapon['Name']}::{bp.get('Pool', 'NoPool')}" 
+                display_label = f"(Pool **{bp.get('Pool', 'N/A')}**) (**{weapon['Name']}**) **{bp['Name']}** [`{blueprint_status}`]"
+                if unique_value not in seen_values: # Check for duplicates
+                    results.append({"label": display_label, "value": unique_value})
+                    seen_values.add(unique_value)
+
+    if not results:
+        await send_and_manage_ephemeral(
+            interaction,
+            content=f"❌ No blueprints found with status: {selected_status}."
+        )
+        return
+
+    selected_color = random.choice(EMBED_COLORS)
+    initial_embed = discord.Embed(
+        title=f"📜 Blueprints with Status: {selected_status}",
+        description="Loading blueprints...",
+        color=selected_color
+    )
+
+    view = BlueprintPaginationView(results, "N/A", "N/A", initial_embed)
+
+    await interaction.response.send_message(
+        embed=initial_embed,
+        view=view,
+        ephemeral=False, 
+        delete_after=90 
+    )
 
 @tree.command(name="website", description="View the Blueprint Database Website")
 async def website(interaction: discord.Interaction):
@@ -616,7 +750,7 @@ async def howto(interaction: discord.Interaction, gamemode: app_commands.Choice[
             ),
             color=discord.Color.blue()
         )
-# 📷 Logo
+
         embed.set_thumbnail(url="attachment://logo.png")
         embed.add_field(
             name="🌐 Browse Blueprint Pools",
@@ -633,7 +767,7 @@ async def howto(interaction: discord.Interaction, gamemode: app_commands.Choice[
             description=(
                 "⚠️ First, it’s important to know that this exploit only works on **PS5 and Xbox Series X/S**, last-gen consoles and PC players do not have access to split-screen, so this won’t work for you.\n"
                 "Also, Player 2 doesn’t need a leveled-up account, but having one makes the pulls easier. If Player 2 uses a fresh account, you may need to perform an extra glitch to equip locked weapons in your Zombies loadout.\n\n"
-                "🔧 Now, here’s how it works:\n\n"
+                "🔧 Now, here’s how it comes:\n\n"
                 "1️⃣ **Launch Call of Duty** and go into Zombies mode.\n\n"
                 "2️⃣ **Connect a second controller** and sign in with your secondary profile.\n\n"
                 "3️⃣ **Set up Player 2’s loadout** with the weapon you want to pull prints for (like the LADRA).\n\n"
@@ -656,6 +790,85 @@ async def howto(interaction: discord.Interaction, gamemode: app_commands.Choice[
 
     await interaction.response.send_message(embed=embed, ephemeral=True, file=file_to_send)
 
+#Pool Explain Command
+@tree.command(name="pool-explain", description="Learn how blueprint pulling works for pools")
+async def pool_explain(interaction: discord.Interaction):
+    embed = discord.Embed(
+        title="📦 Blueprint Pulling — Pool Explanation",
+        description=(
+            "Assuming you're familiar with the pulling exploit, here's how it would work:\n\n"
+            "Let's walk through an example. We'll use the **C9 \"THE PAINTSTORM\"** variant, which is stored in **Pool 15**.\n\n"
+            "1️⃣ You'd transfer the **C9** to your alternate account.\n\n"
+            "2️⃣ Then, on your main account, you'd pick any blueprint that's also stored in **Pool 15** (i.e., **TANTTO .22 \"FISSION\"**) and perform the pull exploit.\n\n"
+            "3️⃣ You should then successfully pull the\n\n"
+            "**C9 \"The PAINTSTORM\"**.\n\n"
+        ),
+        color=discord.Color.purple()
+    )
+    embed.set_thumbnail(url="attachment://logo.png")
+    embed.add_field(
+        name="🌐 Browse Blueprint Pools",
+        value="[parsed.top](https://www.parsed.top/)", inline=False
+    )
+    embed.set_footer(text="Use /pool to explore blueprints across pools and categories.")
+
+    file_to_send = discord.File("assets/logo.png", filename="logo.png")
+
+    await interaction.response.send_message(embed=embed, ephemeral=True, file=file_to_send)
+
+# New help command
+@tree.command(name="help", description="Shows a list of all available commands and their usage.")
+async def help_command(interaction: discord.Interaction):
+    selected_color = random.choice(EMBED_COLORS)
+
+    embed = discord.Embed(
+        title="🤖 Blueprint Bot Commands",
+        description="Here's a list of commands you can use with the Blueprint Bot:",
+        color=selected_color
+    )
+
+    embed.add_field(
+        name="`/blueprint <nameid>`",
+        value="Look up a blueprint by its name (e.g., `/blueprint STORM RAGE`).",
+        inline=False
+    )
+    embed.add_field(
+        name="`/pool <number> [weapontype]`",
+        value="View all blueprints in a specific pool. You can filter by weapon type (e.g., `/pool 1 smgs`).",
+        inline=False
+    )
+    embed.add_field(
+        name="`/search_status <status>`",
+        value="Search blueprints by their release status (e.g., `/search_status RELEASED`).",
+        inline=False
+    )
+    embed.add_field(
+        name="`/howto <gamemode>`",
+        value="Learn how blueprint pulling works for Warzone/Multiplayer or Zombies (e.g., `/howto wz`).",
+        inline=False
+    )
+    embed.add_field(
+        name="`/pool-explain`",
+        value="Get an explanation on how blueprint pulling works specifically for pools.",
+        inline=False
+    )
+    embed.add_field(
+        name="`/website`",
+        value="Get a link to the full Blueprint Database website.",
+        inline=False
+    )
+    embed.add_field(
+        name="`/help`",
+        value="Displays this help message.",
+        inline=False
+    )
+
+    # Set the thumbnail and footer for consistency
+    file_to_send = discord.File("assets/logo.png", filename="logo.png")
+    embed.set_thumbnail(url="attachment://logo.png")
+    embed.set_footer(text="Use these commands to navigate the blueprint database!")
+
+    await interaction.response.send_message(embed=embed, ephemeral=True, file=file_to_send)
 ##################################################################################
 
 # Retrieve the Discord bot token from environment variables

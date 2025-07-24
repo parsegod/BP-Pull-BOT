@@ -3,8 +3,8 @@
 *The offical Discord bot for [Parsed.top](https://parsed.top/)*
 
 *lovingly crafted by*
-- 🐼 **Panda** ***(trashedpandaz)***
-- 📊 **Parse** ***(softlist)***
+- 🐼 **Panda** ***(dc: trashedpandaz)***
+- 📊 **Parse** ***(dc: softlist)***
 
 ---
 

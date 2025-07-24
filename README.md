@@ -1,10 +1,9 @@
 # 🔫 Blueprint Discord Bot
 
 *The offical Discord bot for [Parsed.top](https://parsed.top/)*
-
-*lovingly crafted by*
-- 🐼 **Panda** ***(dc: trashedpandaz)***
-- 📊 **Parse** ***(dc: softlist)***
+*lovingly crafted by 
+- 🐼 **Panda**
+- 📊 **Parse**.
 
 ---
 
@@ -262,7 +261,7 @@ blueprint-discord-bot/
             │   └── BlueprintNameB.jpg
             ├── WeaponName2/
             │   └── BlueprintNameC.jpg
-            └── ...
+            └── .
 ```
 
 ---

@@ -1,6 +1,6 @@
 # 🔫 Blueprint Discord Bot
 
-*A powerful and intuitive Discord bot designed and lovingly crafted by **🐼 Panda** and **📊 Parse**.*
+*A powerful and intuitive Discord bot designed & lovingly crafted by 🐼 **Panda** & 📊 **Parse**.*
 
 ---
 

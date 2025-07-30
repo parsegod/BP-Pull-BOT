@@ -179,6 +179,8 @@ _last_loaded_bot_config_hash = None
 
 current_bot_config = {}
 
+_should_restart = False
+
 def load_config(guild_id=None):
     """
     Loads configuration from config.json.
@@ -432,13 +434,13 @@ async def apply_bot_config(config):
     await bot.change_presence(status=status_to_set, activity=activity)
     print("Bot presence updated.")
 
-@tasks.loop(seconds=60) 
+@tasks.loop(seconds=5) 
 async def check_bot_config_for_restart():
     """
     Periodically checks the bot_config.json file for changes.
     If a change is detected, the bot will gracefully shut down to restart.
     """
-    global _last_loaded_bot_config_hash
+    global _last_loaded_bot_config_hash, _should_restart
     try:
         if os.path.exists(BOT_CONFIG_FILE):
             with open(BOT_CONFIG_FILE, "rb") as f: 
@@ -451,8 +453,9 @@ async def check_bot_config_for_restart():
                 return
 
             if current_hash != _last_loaded_bot_config_hash:
-                print(f"\n✅ Detected change in {BOT_CONFIG_FILE}. Restarting bot...")
+                print(f"\n✅ Detected change in {BOT_CONFIG_FILE}. Initiating restart...")
                 _last_loaded_bot_config_hash = current_hash 
+                _should_restart = True 
                 await bot.close() 
         else:
 
@@ -2062,6 +2065,10 @@ if DISCORD_BOT_TOKEN:
     finally:
 
         print("✅ Bot process terminated.")
+        if _should_restart:
+            print("🔄 Restarting script...")
+
+            os.execl(sys.executable, sys.executable, *sys.argv)
 else:
     print("Error: DISCORD_BOT_TOKEN environment variable not set.")
     print("Please set the DISCORD_BOT_TOKEN environment variable before running the bot.")

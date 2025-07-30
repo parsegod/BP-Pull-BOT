@@ -1,0 +1,27 @@
+{
+    "pfp_url": "None",
+    "status": "idle",
+    "activity_type": "competing",
+    "activity_name": "this is a test this will be override",
+    "rich_presence": {
+        "details": "None",
+        "state": "None",
+        "large_image_url": "None",
+        "large_image_text": "None",
+        "small_image_url": "None",
+        "small_image_text": "None",
+        "start_timestamp": null,
+        "end_timestamp": null
+    },
+    "command_prefix": "/",
+    "log_channel_id": null,
+    "welcome_message": {
+        "enabled": false,
+        "channel_id": null,
+        "content": ""
+    },
+    "rate_limit": {
+        "max_embeds_per_period": 4,
+        "period_seconds": 35
+    }
+}

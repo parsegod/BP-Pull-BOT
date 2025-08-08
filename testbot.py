@@ -679,7 +679,7 @@ def get_pool_blueprints(pool_number: str, weapontype: str = "all"):
                 # Robustly clean blueprint name from any existing markdown bolding or stray asterisks
                 blueprint_name_cleaned = re.sub(r'\*\*(.*?)\*\*', r'\1', bp['Name']).replace('*', '').strip()
                 # Ensure consistent formatting for the display label: BlueprintName IS bolded here
-                display_label = f"(Pool {bp['Pool']}) ({weapon['Name']}) {blueprint_name_cleaned} [`{bp.get('status', 'RELEASED')}`]"
+                display_label = f"(Pool **{bp['Pool']}**) (**{weapon['Name']}**) **{blueprint_name_cleaned}** [`{bp.get('status', 'RELEASED')}`]"
 
                 if unique_value not in seen_values: # Check for duplicates
                     results.append({"label": display_label, "value": unique_value})
@@ -1078,7 +1078,7 @@ async def search_status(interaction: discord.Interaction, status: app_commands.C
             if blueprint_status == selected_status:
                 unique_value = f"{bp['Name']}::{weapon['Name']}::{bp.get('Pool', 'NoPool')}"
                 blueprint_name_cleaned = re.sub(r'\*\*(.*?)\*\*', r'\1', bp['Name']).replace('*', '').strip()
-                display_label = f"(Pool {bp.get('Pool', 'N/A')}) ({weapon['Name']}) {blueprint_name_cleaned} [`{blueprint_status}`]"
+                display_label = f"(Pool **{bp.get('Pool', 'N/A')}**) (**{weapon['Name']}**) **{blueprint_name_cleaned}** [`{blueprint_status}`]"
 
                 if unique_value not in seen_values: # Check for duplicates
                     results.append({"label": display_label, "value": unique_value})
